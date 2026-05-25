@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hospital Management System</title>
+
+    <style>
+        body{
+            font-family: Arial;
+            margin:40px;
+            background:#f4f4f4;
+        }
+
+        h1{
+            color:darkblue;
+        }
+
+        input{
+            padding:10px;
+            margin:5px;
+        }
+
+        button{
+            padding:10px 20px;
+            background:green;
+            color:white;
+            border:none;
+        }
+
+        table{
+            width:100%;
+            margin-top:20px;
+            border-collapse: collapse;
+            background:white;
+        }
+
+        table,th,td{
+            border:1px solid black;
+        }
+
+        th,td{
+            padding:10px;
+            text-align:center;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<h1>Hospital Management System</h1>
+
+<input type="text" id="name" placeholder="Enter Name">
+<input type="number" id="age" placeholder="Enter Age">
+<input type="text" id="disease" placeholder="Enter Disease">
+
+<button onclick="addPatient()">Add Patient</button>
+
+<table>
+
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Age</th>
+        <th>Disease</th>
+    </tr>
+    </thead>
+
+    <tbody id="patientTable"></tbody>
+
+</table>
+
+<script>
+
+    async function loadPatients(){
+
+        const response = await fetch("http://localhost:8080/patients");
+
+        const data = await response.json();
+
+        let table = "";
+
+        data.forEach(patient => {
+
+            table += `
+                <tr>
+                    <td>${patient.id}</td>
+                    <td>${patient.name}</td>
+                    <td>${patient.age}</td>
+                    <td>${patient.disease}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById("patientTable").innerHTML = table;
+    }
+
+    async function addPatient(){
+
+        const patient = {
+
+            name: document.getElementById("name").value,
+            age: document.getElementById("age").value,
+            disease: document.getElementById("disease").value
+        };
+
+        await fetch("http://localhost:8080/patients",{
+
+            method:"POST",
+
+            headers:{
+                "Content-Type":"application/json"
+            },
+
+            body: JSON.stringify(patient)
+        });
+
+        loadPatients();
+    }
+
+    loadPatients();
+
+</script>
+
+</body>
+</html>
